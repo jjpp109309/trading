@@ -11,7 +11,8 @@ today = str(pd.Timestamp('today').date())
 
 
 # %%
-def get_daily_data(ticker: str, date_from: str, date_to: str=today, **kwargs)-> pd.DataFrame:
+def daily_data(ticker: str, date_from: str, date_to: str=today, **kwargs)-> pd.DataFrame:
+
     params = '&'.join(key + '=' + value for key, value in kwargs.items())
     api_key = os.environ['polygon']
 
@@ -21,23 +22,32 @@ def get_daily_data(ticker: str, date_from: str, date_to: str=today, **kwargs)-> 
     data = r.json()
 
     df = pd.DataFrame(data['results'])
+    col_names = {
+        'v': 'volume',
+        'vw': 'volume_weighted',
+        'o': 'open',
+        'c': 'close',
+        'h': 'high',
+        'l': 'low',
+        'n': 'transactions'
+    }
+    df.rename(columns=col_names, inplace=True)
 
-    df['t'] = pd.to_datetime(df['t'], unit='ms').dt.date
+    df['date'] = pd.to_datetime(df['t'], unit='ms').dt.floor('D')
+
     df.insert(0, 'ticker', ticker)
+    df.pop('t')
 
     return df
 
 
 # %%
 def main():
-    df_daily = get_daily_data('AAPL', '2021-08-01', '2021-08-31')
-    print(df_daily.head())
-    print(df_daily.tail())
-
-    df_daily = get_daily_data('TSLA', '2021-08-01')
-    print(df_daily.head())
-    print(df_daily.tail())
-
+    df_daily = daily_data('AAPL', '2021-08-01', '2021-08-31')
+    print(df_daily['date'].min(), df_daily['date'].max())
+    df_daily = daily_data('TSLA', '2021-08-01')
+    print(df_daily['date'].min(), df_daily['date'].max())
+    print(df_daily.columns)
 
 if __name__ == '__main__':
     main()
