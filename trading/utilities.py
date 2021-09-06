@@ -11,7 +11,7 @@ today = str(pd.Timestamp('today').date())
 
 
 # %%
-def get_daily_data(ticker, date_from, date_to=today, **kwargs):
+def get_daily_data(ticker: str, date_from: str, date_to: str=today, **kwargs)-> pd.DataFrame:
     params = '&'.join(key + '=' + value for key, value in kwargs.items())
     api_key = os.environ['polygon']
 
