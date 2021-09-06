@@ -14,8 +14,8 @@
 
 
 
-*/.idea/
-*/.ipynb_checkpoints/
-*/data/
-*/sketch/
-*/delete/
+*.idea/
+*.ipynb_checkpoints/
+*data/
+*sketch/
+*delete/
